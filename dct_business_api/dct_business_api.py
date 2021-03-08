@@ -63,11 +63,6 @@ class Base:
 
 class SubscribeData(Base):
 
-    TRANSACTION_TYPE_SPOT = 'SPOT'
-    TRANSACTION_TYPE_USD_FUTURE = 'USD_FUTURE'
-    TRANSACTION_TYPE_COIN_FUTURE = 'COIN_FUTURE'
-
-
     def __init__(self, user_name, password, rest_base, ws_base):
         super(SubscribeData,self).__init__(user_name, password, rest_base, ws_base)
 
