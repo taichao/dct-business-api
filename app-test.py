@@ -13,10 +13,10 @@ async def main():
     sd = api.subscribe_data(user_name, password, url_base, ws_base)
 
     await asyncio.gather(
-        sd.sub_user_update(ApiConstants.TRANSACTION_TYPE_SPOT, on_order_update=p, on_account_update=p),
-        sd.sub_depth(ApiConstants.TRANSACTION_TYPE_SPOT, "BTCUSDT", 10, p),
-        sd.sub_trade(ApiConstants.TRANSACTION_TYPE_SPOT, 'BTCUSDT', None),
-        sd.sub_book_ticker(ApiConstants.TRANSACTION_TYPE_SPOT, 'btcusdt', None)
+        sd.sub_user_update(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT, on_order_update=p, on_account_update=p),
+        # sd.sub_depth(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT, ApiConstants.SYMBOL_BTCUSDT, 10, p),
+        # sd.sub_trade(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT, ApiConstants.SYMBOL_BTCUSDT, p),
+        # sd.sub_book_ticker(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT, ApiConstants.SYMBOL_BTCUSDT, p),
 
     )
 

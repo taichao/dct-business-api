@@ -4,6 +4,7 @@ from datetime import *
 CODE_SUCCESS = 'success'
 CODE_PLATFORM_ERROR = 'platform_api_business_error'
 
+
 class ApiClient:
     def __init__(self):
         self.__cache = dict()
@@ -64,16 +65,7 @@ class Base:
 class SubscribeData(Base):
 
     def __init__(self, user_name, password, rest_base, ws_base):
-        super(SubscribeData,self).__init__(user_name, password, rest_base, ws_base)
-
-    async def sub_depth(self, type, symbol, level, callback_func):
-        """
-        Args:
-            type: 参见sub_topic
-            level: 层级 5 15 20
-        """
-        p = f'symbol={symbol}&level={level}'
-        await self.sub_topic("DEPTH", type, p, callback_func)
+        super(SubscribeData, self).__init__(user_name, password, rest_base, ws_base)
 
     def check_and_get_user_data(self, data, transaction_type, event_type, data_name):
         if 'transactionType' in data and transaction_type == data[
@@ -97,7 +89,7 @@ class SubscribeData(Base):
 
         await self.sub_user_update(type, process_account_update)
 
-    async def sub_user_update(self, type, **kwargs):
+    async def sub_user_update(self, exchange, type, **kwargs):
         def process_data(data):
             try:
                 if 'accountUpdate' in data and 'on_account_update' in kwargs:
@@ -113,23 +105,32 @@ class SubscribeData(Base):
             except Exception as e:
                 self.logger.error(e)
 
-        await self.sub_topic('USER', type, 'test=test', process_data)
+        await self.sub_topic('USER',exchange, type, 'test=test', process_data)
 
-    async def sub_trade(self, type, symbol, callback_func):
+    async def sub_depth(self, exchange, type, symbol, level, callback_func):
+        """
+        Args:
+            type: 参见sub_topic
+            level: 层级 5 15 20
+        """
+        p = f'symbol={symbol}&level={level}'
+        await self.sub_topic("DEPTH", exchange, type, p, callback_func)
+
+    async def sub_trade(self, exchange, type, symbol, callback_func):
         p = f'symbol={symbol}'
-        await self.sub_topic("TRADE", type, p, callback_func)
+        await self.sub_topic("TRADE", exchange, type, p, callback_func)
 
-    async def sub_book_ticker(self, type, symbol, callback_func):
+    async def sub_book_ticker(self, exchange, type, symbol, callback_func):
         p = f'symbol={symbol}'
-        await self.sub_topic("BOOK_TICKER", type, p, callback_func)
+        await self.sub_topic("BOOK_TICKER", exchange, type, p, callback_func)
 
-    async def sub_topic(self, stream_name, type, extra_param_str, callback_func):
+    async def sub_topic(self, stream_name, exchange, type, extra_param_str, callback_func):
         """
         Args:
             type: 交易类型，可选值包括SPOT, USD_FUTURE, COIN_FUTURE,
         """
         access_token = self.get_access_token()
-        url = f'{self.ws_base}/ws/topic?type={type}&streamName={stream_name}&{extra_param_str}&access_token={access_token}'
+        url = f'{self.ws_base}/ws/topic?type={type}&streamName={stream_name}&exchange={exchange}&{extra_param_str}&access_token={access_token}'
 
         while True:
             try:
@@ -145,7 +146,11 @@ class SubscribeData(Base):
                 self.logger.error('connect error，try later: %s', url)
                 self.logger.exception(e)
 
+
 class ApiConstants:
+    EXCHANGE_BINANCE = 'BINANCE'
+
+    SYMBOL_BTCUSDT = 'BTC-USDT'
 
     TRANSACTION_TYPE_SPOT = 'SPOT'
     TRANSACTION_TYPE_USD_FUTURE = 'USD_FUTURE'
