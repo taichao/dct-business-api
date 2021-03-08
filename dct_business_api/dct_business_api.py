@@ -140,6 +140,7 @@ class SubscribeData(Base):
                         res = await websocket.recv()
                         res = json.loads(res)
                         if (callable(callback_func)):
+                            res['type'] = stream_name
                             callback_func(res)
             except Exception as e:
                 await asyncio.sleep(5)
