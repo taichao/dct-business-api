@@ -1,0 +1,26 @@
+{
+   "accountUpdate": {
+      "balanceDataList": [
+         {
+            "asset": "BTC",
+            "available": 6.0E-7,
+            "freezing": 0
+         },
+         {
+            "asset": "BNB",
+            "available": 0,
+            "freezing": 0
+         },
+         {
+            "asset": "USDT",
+            "available": 88.31624,
+            "freezing": 90
+         }
+      ],
+      "lastUpdateTime": 1614767178971
+   },
+   "eventType": "ACCOUNT_UPDATE",
+   "streamType": "USER",
+   "transactionType": "SPOT",
+   "exchange": "BINANCE"
+}

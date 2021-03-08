@@ -1,0 +1,56 @@
+{
+  "marketData": {
+    "asks": [
+      [
+        "51041.9",
+        "3595"
+      ],
+      [
+        "51042.0",
+        "62"
+      ],
+      [
+        "51042.7",
+        "56"
+      ],
+      [
+        "51042.8",
+        "121"
+      ],
+      [
+        "51043.9",
+        "5"
+      ]
+    ],
+    "bids": [
+      [
+        "51041.8",
+        "2234"
+      ],
+      [
+        "51040.9",
+        "90"
+      ],
+      [
+        "51040.8",
+        "420"
+      ],
+      [
+        "51040.3",
+        "50"
+      ],
+      [
+        "51039.9",
+        "5"
+      ]
+    ],
+    "eventTime": 1614763197714,
+    "eventType": "depthUpdate",
+    "pair": "BTCUSD",
+    "symbol": "BTCUSD_PERP",
+    "transactionTime": 1614763197705
+  },
+  "streamType": "DEPTH",
+  "transactionType": "COIN_FUTURE",
+  "exchange": "BINANCE"
+}

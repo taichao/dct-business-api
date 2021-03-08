@@ -1,0 +1,33 @@
+{
+   "eventType": "ORDER_UPDATE",
+   "orderUpdate": {
+      "commissionAmount": 0,
+      "cumulativeFilledAmount": 0,
+      "cumulativeFilledQty": 0,
+      "exchange": "BINANCE",
+      "executionType": "CANCELED",
+      "icebergOrderQty": 0,
+      "isForward": true,
+      "isInOrderBook": false,
+      "isPendingOrder": false,
+      "lastFilledAmount": 0,
+      "lastFilledPrice": 0,
+      "lastFilledQty": 0,
+      "orderId": 5072583352,
+      "orderListId": -1,
+      "orderStatus": "CANCELED",
+      "orderTradeTime": 1614767178971,
+      "origQty": 0.001,
+      "price": 30000,
+      "quoteOrderQty": 0,
+      "rejectReason": "NONE",
+      "side": "BUY",
+      "stopPrice": 0,
+      "symbol": "BTCUSDT",
+      "tradeId": -1,
+      "type": "LIMIT"
+   },
+   "streamType": "USER",
+   "transactionType": "SPOT",
+   "exchange": "BINANCE"
+}

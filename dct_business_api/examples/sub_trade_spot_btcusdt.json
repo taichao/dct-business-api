@@ -1,0 +1,17 @@
+{
+   "exchange": "BINANCE",
+   "marketData": {
+      "buyerOrderId": 5102803540,
+      "doneTime": 1614926442187,
+      "eventTime": 1614926442188,
+      "eventType": "trade",
+      "isBuyerMaker": true,
+      "price": 47154.92,
+      "quantity": 0.625,
+      "sellerOrderId": 5102805031,
+      "symbol": "BTCUSDT",
+      "tradeId": 685295523
+   },
+   "streamType": "TRADE",
+   "transactionType": "SPOT"
+}
