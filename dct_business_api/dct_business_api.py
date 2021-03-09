@@ -1,6 +1,6 @@
 import logging, websockets, json, asyncio, requests
 from datetime import *
-
+import time
 CODE_SUCCESS = 'success'
 CODE_PLATFORM_ERROR = 'platform_api_business_error'
 
@@ -123,6 +123,27 @@ class SubscribeData(Base):
     async def sub_book_ticker(self, exchange, type, symbol, callback_func):
         p = f'symbol={symbol}'
         await self.sub_topic("BOOK_TICKER", exchange, type, p, callback_func)
+    
+    def _insideUpdate(self,msg,cb,exch,symbol):
+        ium = {}
+        ium['ts'] = time.time()
+        ium['ap'] = msg['marketData']['askPrice']
+        ium['aq'] = msg['marketData']['askQty']
+        ium['bp'] = msg['marketData']['bidPrice']
+        ium['bq'] = msg['marketData']['askQty']
+        ium['exch'] = exch
+        ium['symbol'] = symbol
+        cb(ium)
+    
+    def _tradeUpdate(self,msg,cb,exch,symbol):
+        tum = {}
+        tum['ts'] = time.time()
+        tum['p'] = msg['marketData']['price']
+        tum['q'] = msg['marketData']['quantity']
+        tum['chi'] = 1 if msg['marketData']['isBuyerMaker'] else -1
+        tum['exch'] = exch
+        tum['symbol'] = symbol
+        cb(tum)
 
     async def sub_topic(self, stream_name, exchange, type, extra_param_str, callback_func):
         """
@@ -140,8 +161,15 @@ class SubscribeData(Base):
                         res = await websocket.recv()
                         res = json.loads(res)
                         if (callable(callback_func)):
-                            res['type'] = stream_name
-                            callback_func(res)
+                            if stream_name == 'BOOK_TICKER':
+                                res['type'] = 'inside'
+                                self._insideUpdate(res,callback_func,exchange,extra_param_str) 
+                            elif stream_name == 'TRADE':
+                                res['type'] = 'trade'
+                                self._tradeUpdate(res,callback_func,exchange,extra_param_str)
+                            else:
+                                res['type'] = stream_name
+                                callback_func(res)
             except Exception as e:
                 await asyncio.sleep(5)
                 self.logger.error('connect error，try later: %s', url)
