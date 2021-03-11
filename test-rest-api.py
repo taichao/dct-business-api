@@ -1,5 +1,7 @@
 from dct_business_api import ApiConstants, ApiException, ApiClient
 from private_params import account_name, url_base, user_name, password
+import logging
+import logging.config
 
 
 def test_create_order(rest_client):
@@ -54,7 +56,11 @@ def test_get_account(rest_client, exchange, account_name):
 
 
 if __name__ == '__main__':
+
+    logging.config.fileConfig('config/logging.cfg', )
     rest_client = ApiClient().rest_client(user_name, password, url_base);
-    test_create_order(rest_client)
-    # test_get_order_trades(rest_client, 1369852686744256513)
-    # test_get_account(rest_client, ApiConstants.EXCHANGE_BINANCE, 'prod-spot')
+    # test_create_order(rest_client)
+    test_get_order(rest_client,1369944153596739585)
+    test_cancel_order(rest_client,1369944153596739585)
+    test_get_order_trades(rest_client, 1369944153596739585)
+    test_get_account(rest_client, ApiConstants.EXCHANGE_BINANCE, 'prod-spot')
