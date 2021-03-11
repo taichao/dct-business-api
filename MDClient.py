@@ -1,7 +1,7 @@
 import asyncio
 import logging.config
 from private_params import *
-from dct_business_api.dct_business_api import ApiClient, ApiConstants
+from dct_business_api import ApiClient, ApiConstants
 
 
 class MDClient:

@@ -1,65 +1,7 @@
-import logging, websockets, json, asyncio, requests
-from datetime import *
-import time
-CODE_SUCCESS = 'success'
-CODE_PLATFORM_ERROR = 'platform_api_business_error'
+import logging,time, websockets, json, asyncio
 
+from dct_business_api.base import Base
 
-class ApiClient:
-    def __init__(self):
-        self.__cache = dict()
-
-    def subscribe_data(self, user_name, password, rest_base, ws_base):
-        if user_name in self.__cache is not None:
-            sd = self.__cache[user_name]
-        else:
-            sd = SubscribeData(user_name, password, rest_base, ws_base)
-            if sd.get_access_token() is not None:
-                self.__cache[user_name] = sd
-                logging.info('new SubscribeData')
-            else:
-                raise Exception('login error')
-        return sd
-
-
-class Base:
-    def __init__(self, user_name, password, rest_base, ws_base):
-        self.user_name = user_name
-        self.password = password
-        self.rest_base = rest_base
-        self.ws_base = ws_base
-        self.access_token = None
-        self.expire_time = None
-        self.logger = logging.getLogger("dct_business_api")
-
-    def handle_response(res):
-        data = res.json()
-        if 'code' in data:
-            if CODE_SUCCESS == data['code']:
-                return CODE_SUCCESS, data['data']
-            else:
-                logging.error(data)
-                return data['code'], None
-        return None
-
-    def __login(self):
-        url = self.rest_base + "/login"
-        self.logger.info(f'login - {url} {self.user_name} {self.password}')
-        r = requests.post(url, data={'userName': self.user_name, 'password': self.password})
-        if (r.json()['code']) == 'success':
-            return r.json()['data']['access_token']
-        else:
-            logging.error('login_error:%s', r.json())
-            return
-
-    def get_access_token(self):
-        if self.access_token is not None and self.expire_time is not None and datetime.now() < self.expire_time:
-            return self.access_token
-        else:
-            self.access_token = self.__login()
-            if self.access_token is not None:
-                self.expire_time = datetime.now() + timedelta(days=1)
-                return self.access_token
 
 
 class SubscribeData(Base):
@@ -68,10 +10,8 @@ class SubscribeData(Base):
         super(SubscribeData, self).__init__(user_name, password, rest_base, ws_base)
 
     def check_and_get_user_data(self, data, transaction_type, event_type, data_name):
-        if 'transactionType' in data and transaction_type == data[
-            'transactionType'] and 'eventType' in data and event_type == data['eventType']:
-            if (data[data_name] in data):
-                return data[data_name]
+        if data.get('transactionType') == transaction_type and data.get('eventType') == event_type:
+            return data.get(data_name)
 
     async def sub_order_update(self, type, callback_func):
         def process_order_update(data):
@@ -105,7 +45,7 @@ class SubscribeData(Base):
             except Exception as e:
                 self.logger.error(e)
 
-        await self.sub_topic('USER',exchange, type, 'test=test', process_data)
+        await self.sub_topic('USER', exchange, type, 'test=test', process_data)
 
     async def sub_depth(self, exchange, type, symbol, level, callback_func):
         """
@@ -123,8 +63,8 @@ class SubscribeData(Base):
     async def sub_book_ticker(self, exchange, type, symbol, callback_func):
         p = f'symbol={symbol}'
         await self.sub_topic("BOOK_TICKER", exchange, type, p, callback_func)
-    
-    def _insideUpdate(self,msg,cb,exch,symbol):
+
+    def _insideUpdate(self, msg, cb, exch, symbol):
         ium = {}
         ium['ts'] = time.time()
         ium['ap'] = msg['marketData']['askPrice']
@@ -134,8 +74,8 @@ class SubscribeData(Base):
         ium['exch'] = exch
         ium['symbol'] = symbol
         cb(ium)
-    
-    def _tradeUpdate(self,msg,cb,exch,symbol):
+
+    def _tradeUpdate(self, msg, cb, exch, symbol):
         tum = {}
         tum['ts'] = time.time()
         tum['p'] = msg['marketData']['price']
@@ -163,10 +103,10 @@ class SubscribeData(Base):
                         if (callable(callback_func)):
                             if stream_name == 'BOOK_TICKER':
                                 res['type'] = 'inside'
-                                self._insideUpdate(res,callback_func,exchange,extra_param_str) 
+                                self._insideUpdate(res, callback_func, exchange, extra_param_str)
                             elif stream_name == 'TRADE':
                                 res['type'] = 'trade'
-                                self._tradeUpdate(res,callback_func,exchange,extra_param_str)
+                                self._tradeUpdate(res, callback_func, exchange, extra_param_str)
                             else:
                                 res['type'] = stream_name
                                 callback_func(res)
@@ -174,13 +114,3 @@ class SubscribeData(Base):
                 await asyncio.sleep(5)
                 self.logger.error('connect error，try later: %s', url)
                 self.logger.exception(e)
-
-
-class ApiConstants:
-    EXCHANGE_BINANCE = 'BINANCE'
-
-    SYMBOL_BTCUSDT = 'BTC-USDT'
-
-    TRANSACTION_TYPE_SPOT = 'SPOT'
-    TRANSACTION_TYPE_USD_FUTURE = 'USD_FUTURE'
-    TRANSACTION_TYPE_COIN_FUTURE = 'COIN_FUTURE'
