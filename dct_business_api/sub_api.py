@@ -1,7 +1,7 @@
 import logging,time, websockets, json, asyncio
+from dct_business_api.sub_api_model import *
 
 from dct_business_api.base import Base
-
 
 
 class SubscribeData(Base):
@@ -9,43 +9,25 @@ class SubscribeData(Base):
     def __init__(self, user_name, password, rest_base, ws_base):
         super(SubscribeData, self).__init__(user_name, password, rest_base, ws_base)
 
-    def check_and_get_user_data(self, data, transaction_type, event_type, data_name):
-        if data.get('transactionType') == transaction_type and data.get('eventType') == event_type:
-            return data.get(data_name)
-
-    async def sub_order_update(self, type, callback_func):
-        def process_order_update(data):
-            data = self.check_and_get_user_data(data, type, 'ORDER_UPDATE', 'orderUpdate')
-            if data and callable(callback_func):
-                callback_func(data)
-
-        await self.sub_user_update(type, process_order_update)
-
-    async def sub_account_update(self, type, callback_func):
-        def process_account_update(data):
-            data = self.check_and_get_user_data(data, type, 'ACCOUNT_UPDATE', 'accountUpdate')
-            if data and callable(callback_func):
-                callback_func(data)
-
-        await self.sub_user_update(type, process_account_update)
-
-    async def sub_user_update(self, exchange, type, **kwargs):
+    async def sub_user_update(self, exchange, type, on_account_update, on_order_created, on_order_filled, on_order_canceled):
         def process_data(data):
             try:
-                if 'accountUpdate' in data and 'on_account_update' in kwargs:
-                    logging.info(f'accountUpdate - {data}')
-                    if callable(kwargs['on_account_update']):
-                        kwargs['on_account_update'](data['accountUpdate'])
-                elif 'orderUpdate' in data and 'on_order_update' in kwargs:
-                    logging.info(f'orderUpdate - {data}')
-                    if (callable(kwargs['on_order_update'])):
-                        kwargs['on_order_update'](data['orderUpdate'])
+                event = data.get('eventType')
+                if 'ACCOUNT_UPDATE' == event and callable(on_account_update):
+                    on_account_update(AccountUpdateModel(data))
+                elif 'ORDER_CREATED' == event and callable(on_order_created):
+                    on_order_created(OrderCreatedModel(data))
+                elif 'ORDER_FILLED' == event and callable(on_order_filled):
+                    on_order_filled(OrderFilledModel(data))
+                elif 'ORDER_CANCELED' == event and callable(on_order_canceled):
+                    on_order_canceled(OrderCanceledModel(data))
                 else:
-                    self.logger.error(f'unknown - {data}')
+                    self.logger.error(f"cannot process data:{data}")
+
             except Exception as e:
                 self.logger.error(e)
 
-        await self.sub_topic('USER', exchange, type, 'test=test', process_data)
+        await self.sub_topic('USER', exchange, type, 'test=placeholder', process_data)
 
     async def sub_depth(self, exchange, type, symbol, level, callback_func):
         """

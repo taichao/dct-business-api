@@ -6,7 +6,7 @@ from dct_business_api.handler_example import MDhandler
 
 
 def p(res):
-    print(res)
+    print(res.__dict__)
 
 async def main():
     api = ApiClient()
@@ -15,8 +15,12 @@ async def main():
     md_handler = MDhandler()
 
     await asyncio.gather(
-        # sd.sub_user_update(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT, on_order_update=p, on_account_update=p),
-        sd.sub_depth(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT, ApiConstants.SYMBOL_BTCUSDT, 5, p),
+        sd.sub_user_update(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT,
+                           on_account_update=p,
+                           on_order_filled=p,
+                           on_order_canceled=p,
+                           on_order_created=p),
+        # sd.sub_depth(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT, ApiConstants.SYMBOL_BTCUSDT, 5, p),
         # sd.sub_trade(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT, ApiConstants.SYMBOL_BTCUSDT, md_handler.tradeUpdate),
         # sd.sub_book_ticker(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT, ApiConstants.SYMBOL_BTCUSDT, md_handler.insideUpdate),
 
