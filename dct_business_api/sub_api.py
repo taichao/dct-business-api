@@ -39,12 +39,12 @@ class SubscribeData(Base):
         await self.sub_topic("DEPTH", exchange, type, p, callback_func)
 
     async def sub_trade(self, exchange, type, symbol, callback_func):
-        p = f'symbol={symbol}'
-        await self.sub_topic("TRADE", exchange, type, p, callback_func)
+    
+        await self.sub_topic("TRADE", exchange, type, symbol, callback_func)
 
     async def sub_book_ticker(self, exchange, type, symbol, callback_func):
-        p = f'symbol={symbol}'
-        await self.sub_topic("BOOK_TICKER", exchange, type, p, callback_func)
+        #p = f'symbol={symbol}'
+        await self.sub_topic("BOOK_TICKER", exchange, type, symbol, callback_func)
 
     def _insideUpdate(self, msg, cb, exch, symbol):
         ium = {}
@@ -73,8 +73,11 @@ class SubscribeData(Base):
             type: 交易类型，可选值包括SPOT, USD_FUTURE, COIN_FUTURE,
         """
         access_token = self.get_access_token()
+        if stream_name in ['BOOK_TICKER','TRADE']:
+            symbol = extra_param_str
+            extra_param_str = f'symbol={symbol}'    
         url = f'{self.ws_base}/ws/topic?type={type}&streamName={stream_name}&exchange={exchange}&{extra_param_str}&access_token={access_token}'
-
+        
         while True:
             try:
                 async with websockets.connect(url) as websocket:
@@ -85,7 +88,7 @@ class SubscribeData(Base):
                         if (callable(callback_func)):
                             if stream_name == 'BOOK_TICKER':
                                 res['type'] = 'inside'
-                                self._insideUpdate(res, callback_func, exchange, extra_param_str)
+                                self._insideUpdate(res, callback_func, exchange, symbol)
                             elif stream_name == 'TRADE':
                                 res['type'] = 'trade'
                                 self._tradeUpdate(res, callback_func, exchange, extra_param_str)
