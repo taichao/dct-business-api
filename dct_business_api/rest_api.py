@@ -33,12 +33,16 @@ class RestClient(Base):
             f'{self.rest_base}/thirdParty/getAccountBalance?exchange={exchange}&accountName={account_name}')
         return handle_response(requests.get(url))
 
-    def create_order(self, exchange, transaction_type, account_name, symbol, side, type, time_in_force, quantity,
-                     price):
+    def create_order(self, exchange, transaction_type, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price):
+        """
+
+        :param client_order_id: 客户方订单id，针对同一个id，服务端只会处理一次
+        """
         param = {
             'exchange': exchange,
             'transactionType': transaction_type,
             'accountName': account_name,
+            'clientId': client_order_id,
             'symbol': symbol,
             'side': side,
             'type': type,

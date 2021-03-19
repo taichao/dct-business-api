@@ -10,6 +10,7 @@ def test_create_order(rest_client):
             ApiConstants.EXCHANGE_BINANCE,
             ApiConstants.TRANSACTION_TYPE_SPOT,
             account_name,
+            1,
             ApiConstants.SYMBOL_BTCUSDT,
             ApiConstants.ORDER_SIDE_BUY,
             ApiConstants.ORDER_TYPE_LIMIT,
@@ -31,7 +32,7 @@ def test_cancel_order(rest_client, order_id):
 
     """
     try:
-        res = rest_client.cancel_order(1369852686744256513)
+        res = rest_client.cancel_order(order_id)
         print(res)
     except ApiException as e:
         print(e.code)
@@ -60,7 +61,7 @@ if __name__ == '__main__':
     logging.config.fileConfig('config/logging.cfg', )
     rest_client = ApiClient().rest_client(user_name, password, url_base);
     # test_create_order(rest_client)
-    test_get_order(rest_client,1369944153596739585)
-    test_cancel_order(rest_client,1369944153596739585)
-    test_get_order_trades(rest_client, 1369944153596739585)
-    test_get_account(rest_client, ApiConstants.EXCHANGE_BINANCE, 'prod-spot')
+    # test_get_order(rest_client,1369944153596739585)
+    test_cancel_order(rest_client,1372789872644857858)
+    # test_get_order_trades(rest_client, 1369944153596739585)
+    # test_get_account(rest_client, ApiConstants.EXCHANGE_BINANCE, 'prod-spot')
