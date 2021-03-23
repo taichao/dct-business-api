@@ -11,19 +11,33 @@ def p(res):
 def p1(res):
     print(res)
 
+class cb_class:
+    def __init__(self):
+        pass
+    def on_account_update(self,msg):
+        print('On_ACCOUNT_UPDATE')
+        p(msg)
+    def on_order_filled(self,msg):
+        print('On_ORDER_FLLED')
+        p(msg)
+    def on_order_canceled(self,msg):
+        print('On_ORDER_CANCELED')
+        p(msg)
+    def on_order_created(self,msg):
+        print('On_ORDER_CREATED')
+        p(msg)
+
+
 
 async def main():
     api = ApiClient()
     sd = api.subscribe_data(user_name, password, url_base, ws_base)
  
     md_handler = MDhandler()
+    cb = cb_class()
 
     await asyncio.gather(
-        sd.sub_user_update(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT,
-                           on_account_update=p,
-                           on_order_filled=p,
-                           on_order_canceled=p,
-                           on_order_created=p),
+        sd.sub_user_update(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT,cb),
         # sd.sub_depth(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT, ApiConstants.SYMBOL_BTCUSDT, 20, p1),
         # sd.sub_trade(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT, ApiConstants.SYMBOL_BTCUSDT, p1),
         # sd.sub_trade(ApiConstants.EXCHANGE_BINANCE, ApiConstants.TRANSACTION_TYPE_SPOT, ApiConstants.SYMBOL_BTCUSDT, md_handler.tradeUpdate),

@@ -9,18 +9,18 @@ class SubscribeData(Base):
     def __init__(self, user_name, password, rest_base, ws_base):
         super(SubscribeData, self).__init__(user_name, password, rest_base, ws_base)
 
-    async def sub_user_update(self, exchange, type, on_account_update, on_order_created, on_order_filled, on_order_canceled):
+    async def sub_user_update(self, exchange, type, cb_class):
         def process_data(data):
             try:
                 event = data.get('eventType')
-                if 'ACCOUNT_UPDATE' == event and callable(on_account_update):
-                    on_account_update(AccountUpdateModel(data))
-                elif 'ORDER_CREATED' == event and callable(on_order_created):
-                    on_order_created(OrderCreatedModel(data))
-                elif 'ORDER_FILLED' == event and callable(on_order_filled):
-                    on_order_filled(OrderFilledModel(data))
-                elif 'ORDER_CANCELED' == event and callable(on_order_canceled):
-                    on_order_canceled(OrderCanceledModel(data))
+                if 'ACCOUNT_UPDATE' == event and callable(cb_class.on_account_update):
+                    cb_class.on_account_update(AccountUpdateModel(data))
+                elif 'ORDER_CREATED' == event and callable(cb_class.on_order_created):
+                    cb_class.on_order_created(OrderCreatedModel(data))
+                elif 'ORDER_FILLED' == event and callable(cb_class.on_order_filled):
+                    cb_class.on_order_filled(OrderFilledModel(data))
+                elif 'ORDER_CANCELED' == event and callable(cb_class.on_order_canceled):
+                    cb_class.on_order_canceled(OrderCanceledModel(data))
                 else:
                     self.logger.error(f"cannot process data:{data}")
 
