@@ -46,6 +46,7 @@ class ApiConstants:
     ORDER_SIDE_SELL = 'SELL'
     ORDER_TYPE_LIMIT = 'LIMIT'
     ORDER_TIME_IN_FORCE_GTC = 'GTC'
+    ORDER_TIME_IN_FORCE_IOC = 'IOC'
 
 
 class ApiException(Exception):

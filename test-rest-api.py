@@ -3,6 +3,7 @@ from private_params import account_name, url_base, user_name, password
 import logging
 import logging.config
 import time
+import asyncio
 
 def test_create_order(rest_client):
     try:
@@ -16,10 +17,12 @@ def test_create_order(rest_client):
             ApiConstants.ORDER_TYPE_LIMIT,
             ApiConstants.ORDER_TIME_IN_FORCE_GTC,
             0.0002,
-            54600
+            53000
         )
         print(res)
-        return res['orderId']
+        oid = res['orderId']
+        #asyncio.ensure_future(rest_client.cancel_order_later(oid,1))
+        return oid
     except ApiException as e:
         print(e.code)
         print(e.message)
@@ -61,10 +64,10 @@ if __name__ == '__main__':
 
     logging.config.fileConfig('config/logging.cfg', )
     rest_client = ApiClient().rest_client(user_name, password, url_base);
-    orderid = test_create_order(rest_client)
+    #orderid = test_create_order(rest_client)
     
     #test_get_order(rest_client,1374198349200134145)
     # test_get_order_trades(rest_client, 1369944153596739585)
     #test_get_account(rest_client, ApiConstants.EXCHANGE_BINANCE, account_name)
-    test_cancel_order(rest_client,orderid)
+    test_cancel_order(rest_client,1374522371892854786)
     test_get_account(rest_client, ApiConstants.EXCHANGE_BINANCE, account_name)

@@ -61,6 +61,10 @@ class RestClient(Base):
         return handle_response(
             requests.post(url, data=param)
         )
+    async def cancel_order_later(self,order_id,timeout=None):
+        if timeout:
+            asyncio.sleep(timeout)
+            self.cancel_order(order_id)
 
     def __create_order(self, **kwargs):
         url = self.rest_base + "/thirdParty/createOrder"
