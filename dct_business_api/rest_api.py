@@ -63,7 +63,7 @@ class RestClient(Base):
         )
     async def cancel_order_later(self,order_id,timeout=None):
         if timeout:
-            asyncio.sleep(timeout)
+            await asyncio.sleep(timeout)
             self.cancel_order(order_id)
 
     def __create_order(self, **kwargs):
