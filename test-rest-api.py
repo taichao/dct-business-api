@@ -69,5 +69,5 @@ if __name__ == '__main__':
     #test_get_order(rest_client,1374198349200134145)
     # test_get_order_trades(rest_client, 1369944153596739585)
     #test_get_account(rest_client, ApiConstants.EXCHANGE_BINANCE, account_name)
-    test_cancel_order(rest_client,1374522371892854786)
+    test_cancel_order(rest_client,1374527274509942786)
     test_get_account(rest_client, ApiConstants.EXCHANGE_BINANCE, account_name)
