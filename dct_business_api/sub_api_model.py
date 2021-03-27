@@ -3,6 +3,7 @@ class UserEventModel:
         self.exchange = event.get("exchange")
         self.stream_type = event.get("streamType")
         self.transaction_type = event.get("transactionType")
+        self.event_type = event.get("eventType")
         self.data = event.get("data")
         if not self.data:
             raise Exception('data is None')
@@ -20,6 +21,12 @@ class OrderCanceledModel(UserEventModel):
         super(OrderCanceledModel, self).__init__(event)
         self.order_id = self.data.get("orderId")
         self.status = self.data.get('status')
+
+
+class OrderCreateFailedModel(UserEventModel):
+    def __init__(self, event):
+        super(OrderCreateFailedModel, self).__init__(event)
+        self.order_id = self.data.get("orderId")
 
 
 class OrderFilledModel(UserEventModel):
@@ -47,7 +54,7 @@ class AccountUpdateModel(UserEventModel):
         super(AccountUpdateModel, self).__init__(event)
         self.balance_list = self.data.get('balanceDataList')
         if self.balance_list:
-            self.balance_dict = dict( (item['asset'], item) for item in self.balance_list )
+            self.balance_dict = dict((item['asset'], item) for item in self.balance_list)
 
     def get(self, asset):
         self.balance_dict.get(asset)

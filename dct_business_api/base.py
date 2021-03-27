@@ -34,9 +34,12 @@ class Base:
 
 
 class ApiConstants:
+    # 币安现货
+    EXCH_BINA = "bina"
+
     EXCHANGE_BINANCE = 'BINANCE'
 
-    SYMBOL_BTCUSDT = 'BTC-USDT'
+    SYMBOL_BTCUSDT = 'BTC/USDT'
 
     TRANSACTION_TYPE_SPOT = 'SPOT'
     TRANSACTION_TYPE_USD_FUTURE = 'USD_FUTURE'
@@ -46,6 +49,8 @@ class ApiConstants:
     ORDER_SIDE_SELL = 'SELL'
     ORDER_TYPE_LIMIT = 'LIMIT'
     ORDER_TIME_IN_FORCE_GTC = 'GTC'
+
+    KLINE_INTERVAL_MIN5 = "MIN5"
 
 
 class ApiException(Exception):

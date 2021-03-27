@@ -9,7 +9,7 @@ class SubscribeData(Base):
     def __init__(self, user_name, password, rest_base, ws_base):
         super(SubscribeData, self).__init__(user_name, password, rest_base, ws_base)
 
-    async def sub_user_update(self, exchange, type, on_account_update, on_order_created, on_order_filled, on_order_canceled):
+    async def sub_user_update(self, exchange, type, on_account_update, on_order_created, on_order_filled, on_order_canceled, on_order_create_failed):
         def process_data(data):
             try:
                 event = data.get('eventType')
@@ -21,6 +21,8 @@ class SubscribeData(Base):
                     on_order_filled(OrderFilledModel(data))
                 elif 'ORDER_CANCELED' == event and callable(on_order_canceled):
                     on_order_canceled(OrderCanceledModel(data))
+                elif 'ORDER_CREATE_FAILED' == event and callable(on_order_create_failed):
+                    on_order_create_failed(OrderCreateFailedModel(data))
                 else:
                     self.logger.error(f"cannot process data:{data}")
 
@@ -28,6 +30,11 @@ class SubscribeData(Base):
                 self.logger.error(e)
 
         await self.sub_topic('USER', exchange, type, 'test=placeholder', process_data)
+
+    async def sub_kline(self, exchange, type, symbol, period, callback_func):
+        p = f'symbol={symbol}&period={period}'
+        await self.sub_topic("KLINE", exchange, type, p, callback_func)
+
 
     async def sub_depth(self, exchange, type, symbol, level, callback_func):
         """

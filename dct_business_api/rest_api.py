@@ -28,19 +28,18 @@ class RestClient(Base):
         url = self.__token_url(f'{self.rest_base}/thirdParty/getOrderTrades?orderId={order_id}')
         return handle_response(requests.get(url))
 
-    def get_account_balance(self, exchange, account_name):
+    def get_account_balance(self, exch, account_name):
         url = self.__token_url(
-            f'{self.rest_base}/thirdParty/getAccountBalance?exchange={exchange}&accountName={account_name}')
+            f'{self.rest_base}/thirdParty/getAccountBalance?exch={exch}&accountName={account_name}')
         return handle_response(requests.get(url))
 
-    def create_order(self, exchange, transaction_type, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price):
+    def create_order(self, exch, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price):
         """
 
         :param client_order_id: 客户方订单id，针对同一个id，服务端只会处理一次
         """
         param = {
-            'exchange': exchange,
-            'transactionType': transaction_type,
+            'exch': exch,
             'accountName': account_name,
             'clientId': client_order_id,
             'symbol': symbol,
@@ -57,6 +56,18 @@ class RestClient(Base):
         param = {
             'access_token': self.get_access_token(),
             'orderId': order_id
+        }
+        return handle_response(
+            requests.post(url, data=param)
+        )
+
+    def cancel_all_orders(self, exch, symbol, account_name):
+        url = self.rest_base + '/thirdParty/cancelAllOrders'
+        param = {
+            'access_token': self.get_access_token(),
+            'exch': exch,
+            'symbol': symbol,
+            'accountName': account_name
         }
         return handle_response(
             requests.post(url, data=param)
