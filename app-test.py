@@ -11,6 +11,23 @@ def p(res):
 def p1(res):
     print(res)
 
+class cb_class:
+    def __init__(self):
+        pass
+    def on_account_update(self,msg):
+        print('On_ACCOUNT_UPDATE')
+        p(msg)
+    def on_order_filled(self,msg):
+        print('On_ORDER_FLLED')
+        p(msg)
+    def on_order_canceled(self,msg):
+        print('On_ORDER_CANCELED')
+        p(msg)
+    def on_order_created(self,msg):
+        print('On_ORDER_CREATED')
+        p(msg)
+
+
 
 async def main():
     api = ApiClient()

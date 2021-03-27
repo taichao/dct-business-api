@@ -1,5 +1,5 @@
 import requests
-
+import asyncio
 from dct_business_api.base import ApiException, Base
 
 
@@ -33,7 +33,7 @@ class RestClient(Base):
             f'{self.rest_base}/thirdParty/getAccountBalance?exch={exch}&accountName={account_name}')
         return handle_response(requests.get(url))
 
-    def create_order(self, exch, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price):
+    def create_order(self, exch, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price, timeout=None):
         """
 
         :param client_order_id: 客户方订单id，针对同一个id，服务端只会处理一次
@@ -49,8 +49,9 @@ class RestClient(Base):
             'quantity': quantity,
             'price': price
         }
-        return self.__create_order(**param)
-
+        res = self.__create_order(**param)
+        asyncio.ensure_future(self.cancel_order_later(res['orderId'],timeout))
+        return res
     def cancel_order(self, order_id):
         url = self.rest_base + '/thirdParty/cancelOrderById'
         param = {
@@ -60,6 +61,10 @@ class RestClient(Base):
         return handle_response(
             requests.post(url, data=param)
         )
+    async def cancel_order_later(self,order_id,timeout=None):
+        if timeout:
+            await asyncio.sleep(timeout)
+            self.cancel_order(order_id)
 
     def cancel_all_orders(self, exch, symbol, account_name):
         url = self.rest_base + '/thirdParty/cancelAllOrders'

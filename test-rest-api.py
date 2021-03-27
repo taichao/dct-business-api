@@ -2,7 +2,8 @@ from dct_business_api import ApiConstants, ApiException, ApiClient
 from private_params import account_name, url_base, user_name, password
 import logging,time
 import logging.config
-
+import time
+import asyncio
 
 def test_create_order(rest_client):
     try:
@@ -18,6 +19,9 @@ def test_create_order(rest_client):
             45000
         )
         print(res)
+        oid = res['orderId']
+        #asyncio.ensure_future(rest_client.cancel_order_later(oid,1))
+        return oid
     except ApiException as e:
         print(e.code)
         print(e.message)
