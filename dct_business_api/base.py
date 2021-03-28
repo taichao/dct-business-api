@@ -37,6 +37,9 @@ class ApiConstants:
     # 币安现货
     EXCH_BINA = "bina"
 
+    # 币安u本位合约
+    EXCH_BINAS = "binas"
+
     EXCHANGE_BINANCE = 'BINANCE'
 
     SYMBOL_BTCUSDT = 'BTC/USDT'
@@ -52,6 +55,12 @@ class ApiConstants:
     ORDER_TIME_IN_FORCE_IOC = 'IOC'
 
     KLINE_INTERVAL_MIN5 = "MIN5"
+
+    # 全仓模式
+    MARGIN_TYPE_CROSS = 'cross'
+    # 逐仓模式
+    MARGIN_TYPE_ISOLATED = 'isolated'
+
 
 
 class ApiException(Exception):
