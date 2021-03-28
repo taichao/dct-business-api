@@ -33,9 +33,9 @@ class RestClient(Base):
             f'{self.rest_base}/thirdParty/getAccountBalance?exch={exch}&accountName={account_name}')
         return handle_response(requests.get(url))
 
-    def get_ufuture_position(self, account_name, symbol, margin_type):
+    def get_ufuture_account_and_position(self, account_name, symbol, margin_type):
         url = self.__token_url(
-            f'{self.rest_base}/ufuture/getPosition?symbol={symbol}&accountName={account_name}&marginType={margin_type}')
+            f'{self.rest_base}/ufuture/getBalanceAndPosition?symbol={symbol}&accountName={account_name}&marginType={margin_type}')
         return handle_response(requests.get(url))
 
     def create_order(self, exch, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price, timeout=None):

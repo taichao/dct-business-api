@@ -27,13 +27,13 @@ def test_create_order(rest_client):
         print(e.message)
         print(e.extra)
 
-def test_get_ufuture_position(rest_client):
+def get_ufuture_account_and_position(rest_client):
     """
     查询U本位合约仓位
     :param rest_client:
-    :return: {'accountId': 6, 'accountName': 'techself01', 'symbol': 'BTCUSDT', 'marginType': 'cross', 'deposit': 0.0, 'positionAmt': -0.004, 'entryPrice': 55918.41, 'cumRealizedProfit': 18.35948, 'unrealizedProfit': 0.05611069, 'positionSide': 'BOTH'}
+    :return: 'techself01', 'balanceList': [{'accountName': 'techself01', 'asset': 'USDT', 'balance': 117.07660843, 'availableBalance': 117.07660843}], 'position': {'accountId': 6, 'accountName': 'techself01', 'symbol': 'BTCUSDT', 'marginType': 'cross', 'deposit': 0.0, 'positionAmt': -0.004, 'entryPrice': 55918.41, 'cumRealizedProfit': 18.35948, 'unrealizedProfit': 0.05611069, 'positionSide': 'BOTH'}}'techself01', 'balanceList': [{'accountName': 'techself01', 'asset': 'USDT', 'balance': 117.07660843, 'availableBalance': 117.07660843}], 'position': {'accountId': 6, 'accountName': 'techself01', 'symbol': 'BTCUSDT', 'marginType': 'cross', 'deposit': 0.0, 'positionAmt': -0.004, 'entryPrice': 55918.41, 'cumRealizedProfit': 18.35948, 'unrealizedProfit': 0.05611069, 'positionSide': 'BOTH'}}
     """
-    res = rest_client.get_ufuture_position(account_name, ApiConstants.SYMBOL_BTCUSDT, ApiConstants.MARGIN_TYPE_CROSS)
+    res = rest_client.get_ufuture_account_and_position(account_name, ApiConstants.SYMBOL_BTCUSDT, ApiConstants.MARGIN_TYPE_CROSS)
     print(res)
 
 def test_cancel_order(rest_client, order_id):
@@ -82,7 +82,7 @@ if __name__ == '__main__':
     logging.config.fileConfig('config/logging.cfg', )
     rest_client = ApiClient().rest_client(user_name, password, url_base);
 
-    test_get_ufuture_position(rest_client)
+    get_ufuture_account_and_position(rest_client)
     order_id = test_create_order(rest_client)
     test_get_order(rest_client,order_id)
     test_cancel_order(rest_client,order_id)
