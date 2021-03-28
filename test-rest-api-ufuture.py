@@ -16,7 +16,9 @@ def test_create_order(rest_client):
             ApiConstants.ORDER_TYPE_LIMIT,
             ApiConstants.ORDER_TIME_IN_FORCE_GTC,
             0.004,
-            45000
+            50000,
+            expire_at= int(time.time()) * 1000 + 2 * 60 * 1000,
+            remark='test'
         )
         print(res)
         oid = res['orderId']
@@ -82,14 +84,14 @@ if __name__ == '__main__':
     logging.config.fileConfig('config/logging.cfg', )
     rest_client = ApiClient().rest_client(user_name, password, url_base);
 
-    get_ufuture_account_and_position(rest_client)
-    order_id = test_create_order(rest_client)
-    test_get_order(rest_client,order_id)
-    test_cancel_order(rest_client,order_id)
-    test_get_order(rest_client,order_id)
-
-    order_id = test_create_order(rest_client)
-    test_cancel_all_orders(rest_client, ApiConstants.EXCH_BINAS, ApiConstants.SYMBOL_BTCUSDT, account_name)
+    # get_ufuture_account_and_position(rest_client)
+    # order_id = test_create_order(rest_client)
+    # test_get_order(rest_client,order_id)
+    # test_cancel_order(rest_client,order_id)
+    # test_get_order(rest_client,order_id)
+    #
+    # order_id = test_create_order(rest_client)
+    # test_cancel_all_orders(rest_client, ApiConstants.EXCH_BINAS, ApiConstants.SYMBOL_BTCUSDT, account_name)
     # test_get_order_trades(rest_client, 'bina:1375365963138002945')
     # test_get_account(rest_client, ApiConstants.EXCH_BINA, account_name)
 

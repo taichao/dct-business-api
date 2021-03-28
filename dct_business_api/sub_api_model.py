@@ -21,6 +21,9 @@ class OrderCanceledModel(UserEventModel):
         super(OrderCanceledModel, self).__init__(event)
         self.order_id = self.data.get("orderId")
         self.status = self.data.get('status')
+        self.remark = self.data.get('remark')
+        self.tradeTime = self.data.get('tradeTime')
+        self.price = self.data.get('price')
 
 
 class OrderCreateFailedModel(UserEventModel):

@@ -1,16 +1,16 @@
 from dct_business_api import ApiConstants, ApiException, ApiClient
 from private_params import account_name, url_base, user_name, password
-import logging,time
+import logging
 import logging.config
-import time
-import asyncio
+
 
 def test_create_order(rest_client):
     try:
         res = rest_client.create_order(
-            ApiConstants.EXCH_BINA,
+            ApiConstants.EXCHANGE_BINANCE,
+            ApiConstants.TRANSACTION_TYPE_SPOT,
             account_name,
-            int(time.time()),
+            1,
             ApiConstants.SYMBOL_BTCUSDT,
             ApiConstants.ORDER_SIDE_BUY,
             ApiConstants.ORDER_TYPE_LIMIT,
@@ -19,9 +19,6 @@ def test_create_order(rest_client):
             45000
         )
         print(res)
-        oid = res['orderId']
-        #asyncio.ensure_future(rest_client.cancel_order_later(oid,1))
-        return oid
     except ApiException as e:
         print(e.code)
         print(e.message)
@@ -37,16 +34,6 @@ def test_cancel_order(rest_client, order_id):
     try:
         res = rest_client.cancel_order(order_id)
         print(res)
-    except ApiException as e:
-        print(e.code)
-        print(e.data)
-        print(e.message)
-        print(e.extra)
-
-def test_cancel_all_orders(rest_client, exch, symbol, account_name):
-    try:
-        rest_client.cancel_all_orders(exch,symbol, account_name)
-        print('未报异常，说明操作成功')
     except ApiException as e:
         print(e.code)
         print(e.data)
@@ -74,9 +61,7 @@ if __name__ == '__main__':
     logging.config.fileConfig('config/logging.cfg', )
     rest_client = ApiClient().rest_client(user_name, password, url_base);
     # test_create_order(rest_client)
-    # test_get_order(rest_client,'bina:1375365963138002945')
-    # test_cancel_order(rest_client,"bina:1375365963138002945")
-    test_cancel_all_orders(rest_client, ApiConstants.EXCH_BINA, ApiConstants.SYMBOL_BTCUSDT, account_name)
-    # test_get_order_trades(rest_client, 'bina:1375365963138002945')
-    # test_get_account(rest_client, ApiConstants.EXCH_BINA, account_name)
-
+    # test_get_order(rest_client,1369944153596739585)
+    test_cancel_order(rest_client,1372789872644857858)
+    # test_get_order_trades(rest_client, 1369944153596739585)
+    # test_get_account(rest_client, ApiConstants.EXCHANGE_BINANCE, 'prod-spot')

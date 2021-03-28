@@ -38,7 +38,7 @@ class RestClient(Base):
             f'{self.rest_base}/ufuture/getBalanceAndPosition?symbol={symbol}&accountName={account_name}&marginType={margin_type}')
         return handle_response(requests.get(url))
 
-    def create_order(self, exch, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price, timeout=None):
+    def create_order(self, exch, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price, timeout=None, expire_at=None, remark=None):
         """
 
         :param client_order_id: 客户方订单id，针对同一个id，服务端只会处理一次
@@ -52,7 +52,9 @@ class RestClient(Base):
             'type': type,
             'timeInForce': time_in_force,
             'quantity': quantity,
-            'price': price
+            'price': price,
+            'expireAt': expire_at,
+            'remark': remark
         }
         res = self.__create_order(**param)
         asyncio.ensure_future(self.cancel_order_later(res['orderId'],timeout))
