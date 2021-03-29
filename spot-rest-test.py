@@ -16,8 +16,8 @@ def test_create_order(rest_client):
             ApiConstants.ORDER_TIME_IN_FORCE_GTC,
             0.0004,
             45000,
-            int(time.time()) * 1000 + 1 * 60 * 1000,
-            'test'
+            expire_at = int(time.time()) * 1000 + 1 * 60 * 1000,
+            remark = 'test'
         )
         print(res)
     except ApiException as e:
@@ -61,8 +61,9 @@ if __name__ == '__main__':
 
     logging.config.fileConfig('config/logging.cfg', )
     rest_client = ApiClient().rest_client(user_name, password, url_base);
-    test_create_order(rest_client)
+    #test_create_order(rest_client)
     # test_get_order(rest_client,1369944153596739585)
     # test_cancel_order(rest_client,1372789872644857858)
     # test_get_order_trades(rest_client, 1369944153596739585)
-    # test_get_account(rest_client, ApiConstants.EXCHANGE_BINANCE, 'prod-spot')
+    rest_client.cancel_all_orders(ApiConstants.EXCH_BINA, ApiConstants.SYMBOL_BTCUSDT, account_name)
+    test_get_account(rest_client, ApiConstants.EXCH_BINA, account_name)

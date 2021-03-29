@@ -40,7 +40,7 @@ class RestClient(Base):
 
 
 
-    def create_order(self, exch, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price,timeout=None, expire_at=None, remark=None):
+    def create_order(self, exch, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price, expire_at=None, remark=None):
         """
         :param expire_at: 服务端提供自动取消功能。此字段表示自动取消的时间。格式为长度13的毫秒时间戳。 例如：int(time.time()) * 1000 + 2 * 60 * 1000 2分钟后自动过期。
                 如果未传或小于当前时间，则不自动取消

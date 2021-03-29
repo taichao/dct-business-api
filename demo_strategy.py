@@ -27,18 +27,18 @@ class DemoStrategy:
         
     def insideUpdate(self,msg):
         self._mid = (msg['ap'] + msg['bp'])/2
-        if len(self._pending_orders) > 0:
-            for oid in self._pending_orders:
-                self._ma_client.cancel_order(oid)
-        self._pending_orders = []
+        #if len(self._pending_orders) > 0:
+        #    for oid in self._pending_orders:
+        #        self._ma_client.cancel_order(oid)
+        #self._pending_orders = []
 
     def tradeUpdate(self,msg):
         if not self._mid:
             self._mid = 50000
-        if self._total_num_order_sent < 3:
+        if self._total_num_order_sent < 2:
+            s = time.time()
             res = self._ma_client.create_order(
-                ApiConstants.EXCHANGE_BINANCE,
-                ApiConstants.TRANSACTION_TYPE_SPOT,
+                ApiConstants.EXCH_BINA,
                 account_name,
                 time.time(),
                 ApiConstants.SYMBOL_BTCUSDT,
@@ -46,9 +46,10 @@ class DemoStrategy:
                 ApiConstants.ORDER_TYPE_LIMIT,
                 ApiConstants.ORDER_TIME_IN_FORCE_GTC,
                 0.0003,
-                round(self._mid*0.95,2)
+                round(self._mid*0.95,2),
+                expire_at = int(time.time()) * 1000 + 1 * 2 * 1000
             )
-            print('order_sent')
+            print(f'order_sent,{time.time()-s} elapsed')
             self._pending_orders.append(res['orderId'])
             self._total_num_order_sent += 1
             
