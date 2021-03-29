@@ -6,19 +6,20 @@ import time
 import asyncio
 
 def test_create_order(rest_client):
+    price = 57200
     try:
         res = rest_client.create_order(
             ApiConstants.EXCH_BINAS,
             account_name,
             int(time.time()),
             ApiConstants.SYMBOL_BTCUSDT,
-            ApiConstants.ORDER_SIDE_BUY,
+            ApiConstants.ORDER_SIDE_SELL,
             ApiConstants.ORDER_TYPE_LIMIT,
             ApiConstants.ORDER_TIME_IN_FORCE_GTC,
-            0.004,
-            50000,
+            0.001,
+            price,
             expire_at= int(time.time()) * 1000 + 2 * 60 * 1000,
-            remark='test'
+            remark='平仓-平空-' + str(price)
         )
         print(res)
         oid = res['orderId']
@@ -53,6 +54,16 @@ def test_cancel_order(rest_client, order_id):
         print(e.message)
         print(e.extra)
 
+def test_set_leverage(rest_client):
+    """
+    设置U本位合约合约杠杆倍数
+    """
+    try:
+        res = rest_client.set_leverage(ApiConstants.EXCH_BINAS,account_name, ApiConstants.SYMBOL_BTCUSDT, 3)
+        print(res)
+    except ApiException as e:
+        print(e)
+
 def test_cancel_all_orders(rest_client, exch, symbol, account_name):
     try:
         rest_client.cancel_all_orders(exch,symbol, account_name)
@@ -85,13 +96,14 @@ if __name__ == '__main__':
     rest_client = ApiClient().rest_client(user_name, password, url_base);
 
     # get_ufuture_account_and_position(rest_client)
-    # order_id = test_create_order(rest_client)
+    # #
+    order_id = test_create_order(rest_client)
     # test_get_order(rest_client,order_id)
     # test_cancel_order(rest_client,order_id)
     # test_get_order(rest_client,order_id)
     #
     # order_id = test_create_order(rest_client)
     # test_cancel_all_orders(rest_client, ApiConstants.EXCH_BINAS, ApiConstants.SYMBOL_BTCUSDT, account_name)
-    # test_get_order_trades(rest_client, 'bina:1375365963138002945')
-    # test_get_account(rest_client, ApiConstants.EXCH_BINA, account_name)
+
+    # test_set_leverage(rest_client)
 

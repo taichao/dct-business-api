@@ -38,9 +38,13 @@ class RestClient(Base):
             f'{self.rest_base}/ufuture/getBalanceAndPosition?symbol={symbol}&accountName={account_name}&marginType={margin_type}')
         return handle_response(requests.get(url))
 
-    def create_order(self, exch, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price, timeout=None, expire_at=None, remark=None):
-        """
 
+
+    def create_order(self, exch, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price,timeout=None, expire_at=None, remark=None):
+        """
+        :param expire_at: 服务端提供自动取消功能。此字段表示自动取消的时间。格式为长度13的毫秒时间戳。 例如：int(time.time()) * 1000 + 2 * 60 * 1000 2分钟后自动过期。
+                如果未传或小于当前时间，则不自动取消
+        :param remark: 说明文字，仅做存储，查询
         :param client_order_id: 客户方订单id，针对同一个id，服务端只会处理一次
         """
         param = {
@@ -57,7 +61,6 @@ class RestClient(Base):
             'remark': remark
         }
         res = self.__create_order(**param)
-        asyncio.ensure_future(self.cancel_order_later(res['orderId'],timeout))
         return res
     def cancel_order(self, order_id):
         url = self.rest_base + '/thirdParty/cancelOrderById'
@@ -94,3 +97,14 @@ class RestClient(Base):
         }
         res = requests.post(url, data=param)
         return handle_response(res)
+
+    def set_leverage(self, exch, account_name, symbol, leverage):
+        """
+        设置合约杠杆
+        :param leverage: int类型 1 -> 125
+        :return:
+        """
+        url = self.__token_url(
+            f'{self.rest_base}/ufuture/setLeverage?exch={exch}&accountName={account_name}&symbol={symbol}&leverage={leverage}'
+        )
+        return handle_response(requests.post(url))

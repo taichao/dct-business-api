@@ -30,6 +30,7 @@ class OrderCreateFailedModel(UserEventModel):
     def __init__(self, event):
         super(OrderCreateFailedModel, self).__init__(event)
         self.order_id = self.data.get("orderId")
+        self.error_message = self.data.get("errorMessage")
 
 
 class OrderFilledModel(UserEventModel):
