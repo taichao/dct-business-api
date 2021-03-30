@@ -14,6 +14,7 @@ class OrderCreatedModel(UserEventModel):
         super(OrderCreatedModel, self).__init__(event)
         self.order_id = self.data.get("orderId")
         self.status = self.data.get('status')
+        self.trade_time = self.data.get('tradeTime')
 
 
 class OrderCanceledModel(UserEventModel):
@@ -22,7 +23,9 @@ class OrderCanceledModel(UserEventModel):
         self.order_id = self.data.get("orderId")
         self.status = self.data.get('status')
         self.remark = self.data.get('remark')
+        # 勿删 兼容
         self.tradeTime = self.data.get('tradeTime')
+        self.trade_time = self.data.get('tradeTime')
         self.price = self.data.get('price')
 
 
@@ -44,6 +47,7 @@ class OrderFilledModel(UserEventModel):
         # 暂时忽略
         self.is_forward = self.data.get('isForward')
         self.trade_id = self.data.get('tradeId')
+        self.trade_time = self.data.get('tradeTime')
         self.filled_qty = self.data.get('filledQty')
         self.filled_price = self.data.get('filledPrice')
         self.filled_amount = self.data.get('filledAmount')

@@ -6,19 +6,20 @@ import time
 import asyncio
 
 def test_create_order(rest_client):
-    price = 57200
+    price = 61000
     try:
         res = rest_client.create_order(
             ApiConstants.EXCH_BINAS,
             account_name,
             int(time.time()),
             ApiConstants.SYMBOL_BTCUSDT,
-            ApiConstants.ORDER_SIDE_SELL,
+            ApiConstants.ORDER_SIDE_BUY,
             ApiConstants.ORDER_TYPE_LIMIT,
             ApiConstants.ORDER_TIME_IN_FORCE_GTC,
             0.001,
             price,
-            expire_at= int(time.time()) * 1000 + 2 * 60 * 1000,
+            None,
+            expire_at=int(time.time()) * 1000 + 1 * 60 * 1000,
             remark='平仓-平空-' + str(price)
         )
         print(res)
@@ -89,6 +90,8 @@ def test_get_account(rest_client, exchange, account_name):
     res = rest_client.get_account_balance(exchange, account_name)
     print(res)
 
+def test_send_wechat(rest_client):
+    res = rest_client.send_wechat(account_name, '你好测试')
 
 if __name__ == '__main__':
 
@@ -97,7 +100,7 @@ if __name__ == '__main__':
 
     # get_ufuture_account_and_position(rest_client)
     # #
-    order_id = test_create_order(rest_client)
+    # order_id = test_create_order(rest_client)
     # test_get_order(rest_client,order_id)
     # test_cancel_order(rest_client,order_id)
     # test_get_order(rest_client,order_id)
@@ -106,4 +109,7 @@ if __name__ == '__main__':
     # test_cancel_all_orders(rest_client, ApiConstants.EXCH_BINAS, ApiConstants.SYMBOL_BTCUSDT, account_name)
 
     # test_set_leverage(rest_client)
+
+    test_send_wechat(rest_client)
+
 

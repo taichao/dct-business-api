@@ -40,9 +40,10 @@ class RestClient(Base):
 
 
 
-    def create_order(self, exch, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price, expire_at=None, remark=None):
+    def create_order(self, exch, account_name,client_order_id, symbol, side, type, time_in_force, quantity, price, expire_after, expire_at=None, remark=None):
         """
-        :param expire_at: 服务端提供自动取消功能。此字段表示自动取消的时间。格式为长度13的毫秒时间戳。 例如：int(time.time()) * 1000 + 2 * 60 * 1000 2分钟后自动过期。
+        :param expire_after: !!!单位为秒 优先级expire_after>expire_at!!! 服务端下单发送成功后，expire_after后会出发取消逻辑（如果订单处于可取消状态）
+        :param expire_at: !!!单位为毫秒时间戳!!!服务端提供自动取消功能。此字段表示自动取消的时间。格式为长度13的毫秒时间戳。 例如：int(time.time()) * 1000 + 2 * 60 * 1000 2分钟后自动过期。
                 如果未传或小于当前时间，则不自动取消
         :param remark: 说明文字，仅做存储，查询
         :param client_order_id: 客户方订单id，针对同一个id，服务端只会处理一次
@@ -57,6 +58,7 @@ class RestClient(Base):
             'timeInForce': time_in_force,
             'quantity': quantity,
             'price': price,
+            'expireAfter':expire_after,
             'expireAt': expire_at,
             'remark': remark
         }
@@ -106,5 +108,11 @@ class RestClient(Base):
         """
         url = self.__token_url(
             f'{self.rest_base}/ufuture/setLeverage?exch={exch}&accountName={account_name}&symbol={symbol}&leverage={leverage}'
+        )
+        return handle_response(requests.post(url))
+
+    def send_wechat(self, account_name, msg):
+        url = self.__token_url(
+            f'{self.rest_base}/thirdParty/sendWechat?accountName={account_name}&msg={msg}'
         )
         return handle_response(requests.post(url))
